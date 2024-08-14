@@ -20,7 +20,7 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final responseText = await _apiService.generateText(message.text);
+      final responseText = await _apiService.sendMessage(message.text);
 
       final botMessage = types.TextMessage(
         author: types.User(id: 'bot-id'),
@@ -30,7 +30,6 @@ class ChatProvider with ChangeNotifier {
       );
 
       _messages.insert(0, botMessage);
-      notifyListeners();
     } catch (e) {
       print("Error sending message: $e");
 
@@ -42,7 +41,6 @@ class ChatProvider with ChangeNotifier {
       );
 
       _messages.insert(0, errorMessage);
-      notifyListeners();
     }
   }
 }

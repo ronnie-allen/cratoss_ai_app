@@ -1,31 +1,26 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiService {
-  final String apiKey;
+  final String _url = 'http://192.168.231.153:8000/chat';
 
-  ApiService() : apiKey = dotenv.env['GOOGLE_AI_API_KEY']!; // Ensure the key matches
-
-  Future<String> generateText(String input) async {
-    final url = Uri.parse('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent');
+  Future<String> sendMessage(String message) async {
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $apiKey',
     };
-    final body = json.encode({'input': input});
+    final body = json.encode({'message': message});
 
     try {
-      final response = await http.post(url, headers: headers, body: body);
+      final response = await http.post(Uri.parse(_url), headers: headers, body: body);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return data['text']; // Adjust based on the actual response format
+        return data['response']; // Adjust based on your API's response format
       } else {
-        throw Exception('Failed to generate text');
+        throw Exception('Failed to get response: ${response.statusCode}');
       }
     } catch (e) {
-      print("Error generating text: $e");
+      print("Error sending message: $e");
       return "Sorry, something went wrong.";
     }
   }
